@@ -8,5 +8,5 @@
 
 ## 사용 방법
 
-1. original_pdf 폴더에 자르기 원하는 PDF를 모두 넣습니다.
+1. original_pdf 폴더에 자르고 싶은 PDF를 모두 넣습니다.
 2. python pdfHorizonCropper.py로 프로그램을 실행합니다.
