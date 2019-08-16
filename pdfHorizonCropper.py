@@ -20,20 +20,34 @@ for item in os.listdir("./original_pdf"):
     print("{} file have {} pages".format(item, numberRightPages))
 
     pdf_writer = PdfFileWriter()
+
+    halfPageFlag = 0
     for i in range(numberLeftPages):
         pageLeft = pdfLeft.getPage(i)
         pageRight = pdfRight.getPage(i)
-
         _upperRightX = pageLeft.mediaBox.getUpperRight_x()
         _upperRightY = pageLeft.mediaBox.getUpperRight_y()
 
-        pageLeft.cropBox.lowerLeft = (0, 0)
-        pageLeft.cropBox.upperRight = (_upperRightX / 2, _upperRightY)
-        pdf_writer.addPage(pageLeft)
+        try:
+            nextPageLeft = pdfLeft.getPage(i + 1)
+            nextPageRight = pdfRight.getPage(i + 1)
+            _nextUpperRightX = nextPageLeft.mediaBox.getUpperRight_x()
+            _nextUpperRightY = nextPageRight.mediaBox.getUpperRight_y()
+        except:
+            print('there is no next page')
 
-        pageRight.cropBox.lowerLeft = (_upperRightX / 2, 0)
-        pageRight.cropBox.upperRight = (_upperRightX, _upperRightY)
-        pdf_writer.addPage(pageRight)
+        if _upperRightX - _nextUpperRightX > 0:
+            pageLeft.cropBox.lowerLeft = (0, 0)
+            pageLeft.cropBox.upperRight = (_upperRightX, _upperRightY)
+            pdf_writer.addPage(pageLeft)
+        else:
+            pageLeft.cropBox.lowerLeft = (0, 0)
+            pageLeft.cropBox.upperRight = (_upperRightX / 2, _upperRightY)
+            pdf_writer.addPage(pageLeft)
+
+            pageRight.cropBox.lowerLeft = (_upperRightX / 2, 0)
+            pageRight.cropBox.upperRight = (_upperRightX, _upperRightY)
+            pdf_writer.addPage(pageRight)
 
     with open(os.path.join(outputDirName, "output_" + item), "wb") as f:
         pdf_writer.write(f)
